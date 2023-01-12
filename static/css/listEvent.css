@@ -1,0 +1,77 @@
+.event{
+    display: flex;
+    background-color: aqua;
+    height: 60px;
+    width: 250px;
+
+}
+
+.event a{
+    padding: 1px;
+    border: .01rem solid black;
+}
+
+
+.event a:hover{
+    background-color: rgba(155, 143, 143, 0.253);
+}
+
+
+.a_event{
+    text-decoration: none;
+    text-align: center;
+    width: 60%;
+    color: black;
+}
+
+.icon_del{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+}
+.icon_del img{
+    height: 50%;
+}
+
+.icon_edit{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+}
+
+.icon_edit img{
+    height: 50%;
+}
+
+
+.modal_delete{
+display: flex;
+background-color: black;
+position: absolute;
+height: 200px;
+width: 500px;
+margin-top: -115px;
+margin-left: -100px;
+align-items: flex-end;
+justify-content: flex-start;
+z-index: 100;
+}
+.modal_delete.hidden{
+    display: none;
+}
+
+.modal_delete button{
+    width: 40px;
+    
+}
+
+.bnt-sim{
+    margin-right: 20px;
+}
+
+
+.bnt-nao{
+    margin-left: 20px;
+}
