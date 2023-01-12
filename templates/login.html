@@ -4,25 +4,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/login.css">
     <title>Agenda</title>
 </head>
 <body>
-    <h1>Login</h1>
+
     <div id="login">
+        <h1>Login</h1>
+        <br>
         <form action="/login" method="POST">
             <input name="email" type="text" placeholder="Email">
             <br>
             <input name="password" type="text" placeholder="Senha">
             <br>
-            <a href="/register">Cadastrar</a>
+            <a class= "link_cadastrar" href="/register">Cadastrar</a>
             <br>
-            <input type="submit"> 
+            <input class="button_login" type="submit"> 
         </form>
     </div>
-    <div>
+    <!-- <div>
         {% for user in users %}
         {{user}}
         {% endfor %}
-    </div>
+    </div> -->
 </body>
 </html>

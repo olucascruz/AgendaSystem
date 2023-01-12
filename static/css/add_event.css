@@ -2,7 +2,7 @@
 .form_add_event{
     height: 500px;
     width: 400px;
-    background-color: blueviolet;
+    background-color: rgb(204, 194, 194);
    
     align-items: center;
     justify-content: center;
@@ -15,5 +15,5 @@ body{
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: rgb(128, 96, 96);
+    background: rgb(142, 126, 197);
 }
