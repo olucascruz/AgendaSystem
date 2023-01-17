@@ -1,15 +1,16 @@
-from flask import Flask, session, render_template, request, g, redirect, url_for
-from database import db, db_close
-from database.querys import get_events, get_one_event, get_one_user, get_users
+from flask import Flask, session, render_template, request, g, redirect, url_for, jsonify
+from backend.database import db, db_close
+from backend.database.querys import get_events, get_one_event, get_one_user, get_users
 import sqlite3
 from datetime import datetime
+from backend.database.inserts import insert_user, insert_event
+import requests
+
 
 def routes(app, session):
     @app.route("/")
     def index():
-        _db = db.db_connect()
-        users = get_users(_db["cursor"])
-        _db["connection"].close()
+        users = dict(requests.get('http://127.0.0.1:5000/list_users'))
         return render_template("login.html", users = users)
 
     @app.route("/calendar")
@@ -18,24 +19,22 @@ def routes(app, session):
             return redirect(url_for("login"))
         return render_template("calendar.html")
 
-    @app.route("/register")
-    def register():
-        return render_template("register.html")
-
-    @app.route("/register_user", methods=["post"])
+        
+    @app.route("/register_user", methods=["GET","POST"])
     def register_user():
-        db = getattr(g, "_database", None)
-        if db is None:
-            db = g._database = sqlite3.connect("agenda_db.db")
-            cursor = db.cursor()
-            
+        if request.method == "POST":
+                
             user_name = request.form["name"]
             user_email = request.form["email"]
             user_password = request.form["password"]
-            cursor.execute("insert into user (name, email, password, status) values (?,?,?,?)", [user_name, user_email, user_password, 0])
-        
-        db.commit()
-        return redirect(url_for("calendar"))
+            _db = db.db_connect()
+            insert_user(_db.cursor, user_name, user_email, user_password)
+            _db["connection"].close()
+            
+            db.commit()
+            return redirect(url_for("calendar"))
+        else:
+            return render_template("register.html")
 
     
 
@@ -44,12 +43,15 @@ def routes(app, session):
         if request.method == "POST":
             user_email = request.form["email"]
             user_password = request.form["password"]
-            _db = db.db_connect()
-            user = get_one_user(_db["cursor"], user_email, user_password)
-            _db["connection"].close()
+            data={
+                "email":user_email,
+                "password":user_password
+            }
+            user = dict(requests.post('http://127.0.0.1:5000/auth', jsonify(data)))
 
-            session["name"]=user["name"]
-            session["user_id"]=user["id"]
+            print(user)
+            session["name"]=user[1]
+            session["user_id"]=user[0]
             
 
             if(user):
@@ -79,7 +81,11 @@ def routes(app, session):
                 date_string = event_date+" "+event_hour
                 
                 event_complete_date = datetime.strptime(date_string, '%Y-%m-%d %H:%M').strftime('%d/%m/%y %H:%M')
-                cursor.execute("insert into event (title, description, date, user) values (?,?,?,?)", [event_title, event_description, event_complete_date, session["id"]])
+                _db = db.db_connect()
+                insert_event(_db["cursor"], event_title, event_description, event_complete_date, session["user_id"])
+                _db["connection"].commit()
+                _db["connection"].close()
+    
             
             db.commit()
             return redirect(url_for("list_event"))
@@ -88,9 +94,7 @@ def routes(app, session):
 
     @app.route('/logout')
     def logout():
-        session["id"] = None
-        session["name"] = None
-        session["email"] = None
+        session.clear()
         return redirect(url_for('login'))
 
 

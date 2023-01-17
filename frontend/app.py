@@ -1,12 +1,14 @@
 import sqlite3
 import random
-from flask import Flask, session, render_template, request, g, redirect, url_for
+from flask_cors import CORS
+from flask import Flask, session
 from flask_session import Session
 from datetime import datetime
 from routes import routes
 from database.db import db_connect 
 
 app = Flask(__name__)
+CORS(app)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)

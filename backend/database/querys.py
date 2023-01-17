@@ -2,7 +2,7 @@ import sqlite3
 
 def get_events(cursor, user_id):
 
-    cursor.execute("select * from event where user = ?", [user_id])
+    cursor.execute("SELECT * FROM event WHERE user = ?", [user_id])
     all_events = cursor.fetchall()
 
     events = []
@@ -40,22 +40,10 @@ def get_one_event(cursor, id):
 
 def get_one_user(cursor, user_email, user_password):    
     cursor.execute(f'SELECT * FROM user WHERE email = ? AND password = ?', (user_email, user_password))
-    data_login = cursor.fetchone()
+    user = cursor.fetchone()
     
-    print(data_login)
-    try:
-        user_id = data_login[0]
-        user_name = data_login[1]
-        user ={
-            "id":   user_id, 
-            "name": user_name, 
-            "email":user_email,
-            "password": user_password 
-        } 
-
-        return user
-    except Exception:
-        return data_login
+    return user
+    
 
 
 def get_users(cursor):    
