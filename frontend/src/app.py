@@ -5,7 +5,6 @@ from flask import Flask, session
 from flask_session import Session
 from datetime import datetime
 from routes import routes
-from database.db import db_connect 
 
 app = Flask(__name__)
 CORS(app)
@@ -13,8 +12,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-
-db_connect()
 
 
 routes(app, session)
@@ -29,4 +26,4 @@ routes(app, session)
     
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True, port=5001)

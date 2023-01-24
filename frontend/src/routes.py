@@ -1,25 +1,23 @@
 from flask import Flask, session, render_template, request, g, redirect, url_for, jsonify
-from backend.database import db, db_close
-from backend.database.querys import get_events, get_one_event, get_one_user, get_users
 import sqlite3
 from datetime import datetime
-from backend.database.inserts import insert_user, insert_event
 import requests
+import json
 
-
+API = 'http://127.0.0.1:8000/'
 def routes(app, session):
+
+    # LOGIN
     @app.route("/")
     def index():
-        users = dict(requests.get('http://127.0.0.1:5000/list_users'))
+        try:
+            users = requests.get(API+'list_users')
+            users = users.text
+        except Exception:
+            users = "falha de conexão"
+        print(users)
         return render_template("login.html", users = users)
-
-    @app.route("/calendar")
-    def calendar():
-        if session["name"] == None:
-            return redirect(url_for("login"))
-        return render_template("calendar.html")
-
-        
+     
     @app.route("/register_user", methods=["GET","POST"])
     def register_user():
         if request.method == "POST":
@@ -27,16 +25,14 @@ def routes(app, session):
             user_name = request.form["name"]
             user_email = request.form["email"]
             user_password = request.form["password"]
-            _db = db.db_connect()
-            insert_user(_db.cursor, user_name, user_email, user_password)
-            _db["connection"].close()
-            
-            db.commit()
+            data ={
+                "name":user_name,
+                "email":user_email,
+                "password":user_password
+            }
             return redirect(url_for("calendar"))
         else:
             return render_template("register.html")
-
-    
 
     @app.route("/login", methods=["GET","POST"])
     def login():
@@ -47,115 +43,166 @@ def routes(app, session):
                 "email":user_email,
                 "password":user_password
             }
-            user = dict(requests.post('http://127.0.0.1:5000/auth', jsonify(data)))
-
-            print(user)
-            session["name"]=user[1]
-            session["user_id"]=user[0]
             
+            response = requests.post(API+'auth', json.dumps(data))
 
-            if(user):
+            body = dict(response.json())
+            if(response.status_code == 200): 
+                session["user_id"]=body["id"]
+                session["name"]= body["name"]
+
                 return redirect(url_for("calendar"))
             else:
-                return render_template('login.html')
+                error = "Dados invalidos"
+                return render_template('login.html', error = error)
         else:
             return render_template('login.html')
-
-    @app.route("/add_event", methods=["GET", "POST"])
-    def add_event():
-        if request.method == "POST":
-            db = getattr(g, "_database", None)
-            if db is None:
-                db = g._database = sqlite3.connect("agenda_db.db")
-                cursor = db.cursor()
-                
-                event_title = request.form["title"]
-                event_description = request.form["description"]
-                event_date = request.form["date"]
-                event_hour =  request.form["hour"]
-
-                if not event_title:
-                    event_title = "Meu evento"
-
-                
-                date_string = event_date+" "+event_hour
-                
-                event_complete_date = datetime.strptime(date_string, '%Y-%m-%d %H:%M').strftime('%d/%m/%y %H:%M')
-                _db = db.db_connect()
-                insert_event(_db["cursor"], event_title, event_description, event_complete_date, session["user_id"])
-                _db["connection"].commit()
-                _db["connection"].close()
-    
-            
-            db.commit()
-            return redirect(url_for("list_event"))
-        else: 
-            return render_template("addEvent.html")
 
     @app.route('/logout')
     def logout():
         session.clear()
         return redirect(url_for('login'))
 
-
-
-
-
-
+    # ENTER APP
+    @app.route("/calendar")
+    def calendar():
+        if session["name"] == None:
+            return redirect(url_for("login"))
+        return render_template("calendar.html")
+   
     @app.route("/list_event")
     def list_event():
         if session["name"] == None:
             return redirect(url_for("login"))
-        _db = db.db_connect()
-        events = get_events(_db["cursor"], session["user_id"])
-        _db["connection"].close()
-    
-        session["events"] = events
+        print("AQUI É O USER ID: ",session["user_id"])
+        events = requests.get(API+"list_event/"+str(session["user_id"]))
+        events = list(events.json())
         return render_template("listEvents.html", events = events)
+
+    # CRUD EVENT
+    @app.route("/add_event", methods=["GET", "POST"])
+    def add_event():
+        if request.method == "POST":
+            event_title = request.form["title"]
+            event_description = request.form["description"]
+            event_date = request.form["date"]
+            event_hour =  request.form["hour"]
+
+            if not event_title:
+                event_title = "Meu evento"
+
+            
+            date_string = event_date+" "+event_hour
+            
+            event_complete_date = datetime.strptime(date_string, '%Y-%m-%d %H:%M').strftime('%d/%m/%y %H:%M')
+           
+            data = {
+                "title":event_title,
+                "description":event_description,
+                "date":event_complete_date,
+                "user_id":session["user_id"]
+            }
+
+            event = requests.post(API+"add_event", json.dumps(data))
+
+            return redirect(url_for("list_event"))
+        else: 
+            return render_template("addEvent.html")
 
     @app.route("/event/<int:id>")
     def view_event(id):
-        a_event = get_one_event(id)
-        return render_template("event.html", event=a_event)
+        event = requests.get(API+"event/"+str(id))
+        event = dict(event.json())
+        return render_template("event.html", event=event)
 
-    @app.route("/del_event", methods=["post"])
+    @app.route("/del_event", methods=["POST"])
     def del_event():
         id_event = request.form["id"]   
-        db = getattr(g, "_database", None)
-        if db is None:
-            db = g._database = sqlite3.connect("agenda_db.db")
-            cursor = db.cursor()
-            cursor.execute(f'delete from event where eventid = ?', [id_event])
-        db.commit()
+        event = requests.delete(API+"delete_event/"+id_event)
         return redirect(url_for("list_event"))
 
-
-
-    @app.route("/edit_event/<int:id>", methods=["get", "post"])
+    @app.route("/edit_event/<int:id>", methods=["GET", "POST"])
     def edit_event(id):
         if request.method == "POST":
-            db = getattr(g, "_database", None)
-            if db is None:
-                db = g._database = sqlite3.connect("agenda_db.db")
-                cursor = db.cursor()
-                title_event = request.form["title"]
-                description_event = request.form["description"]
-                date_event = request.form["date"]
-                hour_event = request.form["hour"]
+            title_event = request.form["title"]
+            description_event = request.form["description"]
+            date_event = request.form["date"]
+            hour_event = request.form["hour"]
 
-                date_complete = date_event + " " + hour_event 
-                try:
-                    cursor.execute(f'update event set title = ?, description = ?, date = ? where eventid = ?', [title_event, description_event, date_complete, id])
-                except Exception as ex:
-                    print(ex)
-            db.commit()
-            return redirect(url_for("list_event"))
-        _db = db.db_connect()
-        a_event = get_one_event(_db["cursor"],id)
-        _db["connection"].close()
+            date_complete = date_event + " " + hour_event 
+            
+            if not title_event:
+                title_event = "Meu evento"
+
+            data = {
+                "title":title_event,
+                "description":description_event,
+                "date":date_complete 
+            }
+            
+            response = requests.put(API+"edit_event/"+str(id), json.dumps(data))
+
+          
+            if(response.status_code == 200):
+                return redirect(url_for("list_event"))
+            else:
+                print("error ao editar")
+                return redirect(url_for("list_event"))
         
-        return render_template("/editEvent.html", event=a_event)
+        event = requests.get(API+"event/"+str(id))
+        event = dict(event.json())
+        return render_template("editEvent.html", event=event)
 
-    @app.route("/user")
+
+    # CRUD USER
+    @app.route("/user", methods=["GET"])
     def view_user():
-        render_template("user.html")
+        print("user id: ", session["user_id"])
+        user = requests.get(API+"user/"+str(session["user_id"]))
+        user = dict(user.json())
+        print(user)
+        return render_template("user.html", user = user)
+
+    @app.route("/edit_user", methods=["GET", "POST"])
+    def edit_user():
+        if request.method == "POST":
+            print(request.form)
+            name = request.form["name"]
+            email = request.form["email"]
+            password = request.form["password"]
+            actual_password = request.form["actual_password"]
+
+
+            data = {
+                "name":name,
+                "email":email,
+                "password":password,
+                "actual_password": actual_password
+            }
+
+            print("AAAAAAAAA")
+            response =  requests.put(API+"edit_user/"+str(session["user_id"]), json.dumps(data))
+            
+            if(response.status_code == 200):
+                return redirect(url_for("view_user"))
+            
+            error = "Senha incorreta"
+            return render_template("edit_user.html", error=error)
+        return render_template("edit_user.html")
+    
+    @app.route("/del_user", methods=["POST"])
+    def del_user():
+        if request.method == "POST":
+            password = request.form["password"]
+
+            data = {
+                "password": password
+            }
+
+            delete = requests.put(API+"delete_user/"+str(session["user_id"], jsonify(data)))
+
+            if delete:
+                return redirect(url_for("logout"))
+            
+            error = "Senha incorreta"
+            return redirect(url_for("user", error))

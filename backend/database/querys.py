@@ -1,7 +1,6 @@
 import sqlite3
 
 def get_events(cursor, user_id):
-
     cursor.execute("SELECT * FROM event WHERE user = ?", [user_id])
     all_events = cursor.fetchall()
 
@@ -39,12 +38,16 @@ def get_one_event(cursor, id):
     return a_event
 
 def get_one_user(cursor, user_email, user_password):    
-    cursor.execute(f'SELECT * FROM user WHERE email = ? AND password = ?', (user_email, user_password))
+    cursor.execute(f'SELECT * FROM user WHERE email = ? AND password = ?', [user_email, user_password])
     user = cursor.fetchone()
     
     return user
     
-
+def get_user_by_id(cursor, id):
+    cursor.execute(f'SELECT * FROM user WHERE userid = ?', [id])
+    user = cursor.fetchone()
+    
+    return user
 
 def get_users(cursor):    
     cursor.execute("SELECT * from user")

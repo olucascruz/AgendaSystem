@@ -25,4 +25,5 @@ htmlcov/
 *,cover
 
 __pycache__
+flask_session
 *.db

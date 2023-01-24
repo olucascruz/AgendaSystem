@@ -1,8 +1,4 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+
 
 body{
     display: flex;
@@ -63,6 +59,7 @@ header .icons span:last-child{
     list-style: none;
     flex-wrap: wrap;
     text-align: center;
+
 }
 
 .calendar .days{
@@ -79,6 +76,7 @@ header .icons span:last-child{
 .calendar ul li {
     position: relative;
     width: calc(100% / 7);
+    height: 25px;
 }
 
 .calendar ul li::before{
@@ -100,4 +98,8 @@ header .icons span:last-child{
 
 .active{
     background: red;
+}
+
+.inactive{
+    color: #878787;
 }

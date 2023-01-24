@@ -1,6 +1,6 @@
 from flask import Flask, session
 from urls import urls
-from database.db import create_db
+from database.db import create_db, db_connect
 from flask_session import Session
 
 app = Flask(__name__)
@@ -10,11 +10,11 @@ Session(app)
 app.secret_key = b'kdakoaskoa_2821'
 
 
-create_db()
+db_connect()
 urls(app)
 
 
 
 
 if __name__ == "__main__":
-    app.run(port=8000)
+    app.run(debug=True, port=8001)

@@ -22,7 +22,7 @@ body{
 
 .link_cadastrar{
     text-decoration: none;
-    color: white;
+    color: rgb(69, 35, 189);
 }
 
 .link_cadastrar:hover{
@@ -30,7 +30,7 @@ body{
 }
 
 .button_login{
-    margin-top: 20px;
+    margin-top: 10px;
     height: 30px;
     width: 180px;
     border-radius: 40px;
@@ -38,4 +38,9 @@ body{
 
 .button_login:hover{
     background: rgb(102, 97, 97);
+}
+
+.error{
+    margin: 0;
+    color: red;
 }

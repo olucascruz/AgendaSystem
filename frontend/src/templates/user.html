@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/user.css">
+    <link rel="stylesheet" href="../static/css/reset.css">
     <title>Agenda</title>
 </head>
 <body>
-    
+    <div class="userCard">
+        <h2 class="name">{{user.name}}</h2>
+        <br>
+        <p class="email">{{user.email}}</p>
+        <div class="buttonsCard">
+            <a class="buttonUser" href="/edit_user">Editar conta</a> 
+            <a class="buttonUser" href="/del_user">Deletar conta</a>
+        </div>
+    </div>
 </body>
 </html>

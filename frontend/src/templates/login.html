@@ -18,15 +18,18 @@
             <br>
             <input name="password" type="text" placeholder="Senha">
             <br>
-            <a class= "link_cadastrar" href="/register">Cadastrar</a>
+            <a class= "link_cadastrar" href="/register_user">Cadastrar</a>
             <br>
+            {% if error%}
+            <p class="error">{{error}}</p>
+            {% endif %}
             <input class="button_login" type="submit"> 
         </form>
     </div>
-    <!-- <div>
+    <div>
         {% for user in users %}
         {{user}}
         {% endfor %}
-    </div> -->
+    </div>
 </body>
 </html>

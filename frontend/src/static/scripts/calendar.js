@@ -13,12 +13,13 @@ const months = [ "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Ju
 const renderCalendar = ()=>{
     let firstDayofMonth = new Date(currentYear, currentMonth, 1).getDay(),
     lastDateofMonth = new Date(currentYear, currentMonth + 1,0 ).getDate(),
+    lastDayofMonth = new Date(currentYear, currentMonth + lastDateofMonth ).getDay(),
     lastDateofLastMonth = new Date(currentYear, currentMonth, 0).getDate();
 
     let liTag = ""
 
-    for(let i = firstDayofMonth; i>0; i--){
-        liTag += `<li>${lastDateofLastMonth - i + 1}</li>`;
+    for(let i = firstDayofMonth; i > 0; i--){
+        liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
     }
 
     for(let i = 1; i<=lastDateofMonth; i++){
@@ -27,6 +28,10 @@ const renderCalendar = ()=>{
         }else{
             liTag += `<li>${i}</li>`
         }
+    }
+
+    for(let i = lastDayofMonth; i < 6; i++){
+        liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`
     }
 
     currentDate.innerText = `${months[currentMonth]} ${currentYear}`;
