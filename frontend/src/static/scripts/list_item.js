@@ -1,25 +1,18 @@
-const edit_bnt = document.querySelectorAll(".icon_edit")
-const del_bnt = document.querySelectorAll(".icon_del")
+const delBtn = document.querySelectorAll(".icon_del")
+const cancelBtn = document.querySelectorAll(".btn-nao")
 
-console.log(del_bnt)
+let modal; 
 
-function delete_event(){
-    let id = document.querySelector("#id")
-    fetch(`/event_del/${id}`,{
-    method:'DELETE'
-}).then(response=>{
-    return response.json()
-}).then(data=>{console.log(data)}) 
-}
-
-
-del_bnt.forEach((el)=>{
+delBtn.forEach((el)=>{
     el.addEventListener("click", ()=>{
-        const modal = document.querySelector(".modal_delete");
+        console.log(el.id)
+        modal = document.getElementById(`modal-${el.id}`);
         modal.classList.remove("hidden")    
     })
-
-    let input_id = document.querySelector("#id")
-
-    input_id.value = el.value
 })
+
+cancelBtn.forEach((el)=>{
+    el.addEventListener("click",()=>{
+        modal.classList.add("hidden")
+    })
+});

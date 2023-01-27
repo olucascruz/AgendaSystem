@@ -37,11 +37,14 @@ def get_one_event(cursor, id):
         }
     return a_event
 
-def get_one_user(cursor, user_email, user_password):    
+def auth_db(cursor, user_email, user_password):    
     cursor.execute(f'SELECT * FROM user WHERE email = ? AND password = ?', [user_email, user_password])
     user = cursor.fetchone()
+    if user[3] != -1:
+        cursor.execute('UPDATE user SET status = ? WHERE userid = ?', [1, user[0]])
     
-    return user
+        return user
+    return []
     
 def get_user_by_id(cursor, id):
     cursor.execute(f'SELECT * FROM user WHERE userid = ?', [id])

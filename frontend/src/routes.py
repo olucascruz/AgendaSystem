@@ -30,7 +30,9 @@ def routes(app, session):
                 "email":user_email,
                 "password":user_password
             }
-            return redirect(url_for("calendar"))
+
+            response = requests.post(API+'register', json.dumps(data))
+            return redirect(url_for("login"))
         else:
             return render_template("register.html")
 
@@ -44,7 +46,7 @@ def routes(app, session):
                 "password":user_password
             }
             
-            response = requests.post(API+'auth', json.dumps(data))
+            response = requests.post(API+'login', json.dumps(data))
 
             body = dict(response.json())
             if(response.status_code == 200): 
@@ -60,6 +62,7 @@ def routes(app, session):
 
     @app.route('/logout')
     def logout():
+        requests.put(API+"list_event/"+str(session["user_id"]))
         session.clear()
         return redirect(url_for('login'))
 
@@ -68,7 +71,9 @@ def routes(app, session):
     def calendar():
         if session["name"] == None:
             return redirect(url_for("login"))
-        return render_template("calendar.html")
+        events = requests.get(API+"list_event/"+str(session["user_id"]))
+        events = list(events.json())
+        return render_template("calendar.html", events=events)
    
     @app.route("/list_event")
     def list_event():
@@ -199,10 +204,6 @@ def routes(app, session):
                 "password": password
             }
 
-            delete = requests.put(API+"delete_user/"+str(session["user_id"], jsonify(data)))
-
-            if delete:
-                return redirect(url_for("logout"))
+            delete = requests.put(API+"delete_user/"+str(session["user_id"]), json.dumps(data))
             
-            error = "Senha incorreta"
-            return redirect(url_for("user", error))
+            return redirect(url_for("login"))

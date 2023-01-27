@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,7 +10,7 @@
 <body>
 
     <div id="login">    
-        <img src="https://i.ibb.co/0rZnFXc/logo-1.png">
+        <img src="https://i.ibb.co/0rZnFXc/logo-1.png" alt="icone da agenda">
         <h1 style="margin: 0;">Login</h1>
         <br>
         <form action="/login" method="POST">
@@ -21,14 +21,14 @@
             <a class= "link_cadastrar" href="/register_user">Cadastrar</a>
             <br>
             {% if error%}
-            <p class="error">{{error}}</p>
+                <p class="error">{{error}}</p>
             {% endif %}
             <input class="button_login" type="submit"> 
         </form>
     </div>
     <div>
         {% for user in users %}
-        {{user}}
+            {{user}}
         {% endfor %}
     </div>
 </body>

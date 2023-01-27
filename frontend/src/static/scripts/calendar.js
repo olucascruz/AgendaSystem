@@ -1,56 +1,28 @@
-const currentDate = document.querySelector(".current-date");
-const daysTag = document.querySelector(".days")
-const prevNextIcons = document.querySelectorAll(".icon span")
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.3/index.global.min.js"></script>
+
+let calendarEl = document.getElementById("calendar");
+let events = Json.parse(document.getElementById("calendar").dataset.events);
+
+console.log(events);
 
 
-let date = new Date(),
-currentYear = date.getFullYear(),
-currentMonth = date.getMonth();
 
-
-const months = [ "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-
-const renderCalendar = ()=>{
-    let firstDayofMonth = new Date(currentYear, currentMonth, 1).getDay(),
-    lastDateofMonth = new Date(currentYear, currentMonth + 1,0 ).getDate(),
-    lastDayofMonth = new Date(currentYear, currentMonth + lastDateofMonth ).getDay(),
-    lastDateofLastMonth = new Date(currentYear, currentMonth, 0).getDate();
-
-    let liTag = ""
-
-    for(let i = firstDayofMonth; i > 0; i--){
-        liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
+let calendar = new FullCalendar.Calendar(calendarEl, {
+    locale:'pt-br',
+    buttonText: {
+    today: 'Hoje',
+    month: 'Mês',
+    week: 'Semana',
+    day: 'Hoje',
+    list: 'Lista'
+    },
+    events:[],
+    selectable:true,
+    select: (start, end)=>{
+        console.log(start)
+    },
+    eventClick:(info)=>{
+        window.location.href = `/edit_event/${info.event.id}`
     }
-
-    for(let i = 1; i<=lastDateofMonth; i++){
-        if(i == date.getDate() && currentMonth == date.getMonth()){
-            liTag += `<li class="active">${i}</li>`    
-        }else{
-            liTag += `<li>${i}</li>`
-        }
-    }
-
-    for(let i = lastDayofMonth; i < 6; i++){
-        liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`
-    }
-
-    currentDate.innerText = `${months[currentMonth]} ${currentYear}`;
-    daysTag.innerHTML = liTag;
-}
-renderCalendar();
-
-prevNextIcons.forEach(icon =>{
-    icon.addEventListener("click", ()=>{
-        currentMonth = icon.id === "prev" ? currentMonth-1 : currentMonth+1;
-        
-
-        if(currentMonth<0 || currentMonth>11){
-            date=date.getFullYear();
-            currentMonth = date.getMonth();
-        }else{
-            date = new Date();
-        }
-        renderCalendar();
-    })
 })
-
+calendar.render()

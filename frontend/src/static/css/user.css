@@ -3,7 +3,7 @@ body{
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: rgb(142, 126, 197);
+    background: rgb(153, 137, 204);
 }
 
 .userCard{
@@ -15,17 +15,19 @@ body{
     height: 80vh;
     border-radius: 10%;
 }
+
 a{
     text-decoration: none;
     color: black;
 }
+
 .buttonUser{
     text-align: center;
     vertical-align: middle;
     background-color: rgb(255, 255, 255);
     border-radius: 10%;
-    width: 120px;
-    height: 25px;
+    width: 100px;
+    height: 35px;
     margin-left: 10px;
     margin-right: 10px;
 }
