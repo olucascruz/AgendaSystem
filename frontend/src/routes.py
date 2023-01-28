@@ -2,6 +2,8 @@ from flask import render_template, request, redirect, url_for, jsonify
 from datetime import datetime
 import requests
 import json
+from api import api_request
+
 
 API = 'http://127.0.0.1:8000/'
 def routes(app, session):
@@ -21,14 +23,7 @@ def routes(app, session):
     def register_user():
         if request.method == "POST":
                 
-            user_name = request.form["name"]
-            user_email = request.form["email"]
-            user_password = request.form["password"]
-            data ={
-                "name":user_name,
-                "email":user_email,
-                "password":user_password
-            }
+            data = dict(request.form)
 
             response = requests.post(API+'register', json.dumps(data))
             return redirect(url_for("login"))
@@ -38,13 +33,8 @@ def routes(app, session):
     @app.route("/login", methods=["GET","POST"])
     def login():
         if request.method == "POST":
-            user_email = request.form["email"]
-            user_password = request.form["password"]
-            data={
-                "email":user_email,
-                "password":user_password
-            }
-            
+
+            data = dict(request.form)            
             response = requests.post(API+'login', json.dumps(data))
 
             body = dict(response.json())
@@ -170,21 +160,7 @@ def routes(app, session):
     @app.route("/edit_user", methods=["GET", "POST"])
     def edit_user():
         if request.method == "POST":
-            print(request.form)
-            name = request.form["name"]
-            email = request.form["email"]
-            password = request.form["password"]
-            actual_password = request.form["actual_password"]
-
-
-            data = {
-                "name":name,
-                "email":email,
-                "password":password,
-                "actual_password": actual_password
-            }
-
-            print("AAAAAAAAA")
+            data = dict(request.form)
             response =  requests.put(API+"edit_user/"+str(session["user_id"]), json.dumps(data))
             
             if(response.status_code == 200):
@@ -197,11 +173,7 @@ def routes(app, session):
     @app.route("/del_user", methods=["POST"])
     def del_user():
         if request.method == "POST":
-            password = request.form["password"]
-
-            data = {
-                "password": password
-            }
+            data = dict(request.form)
 
             delete = requests.put(API+"delete_user/"+str(session["user_id"]), json.dumps(data))
             
