@@ -78,7 +78,7 @@ class api_request():
         response = requests.put(self.BASE_URL+endpoint, json.dumps(data))
         return response.status_code
 
-    def event(self, data):
+    def edit_event(self, data):
         endpoint = "edit_event/"
         response = requests.put(self.BASE_URL+endpoint, json.dumps(data))
         return response.status_code
