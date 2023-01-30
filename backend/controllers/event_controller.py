@@ -4,26 +4,33 @@ from database.inserts import *
 from database.deletes import *
 from database.updates import *
 from database import db  
-
+from datetime import datetime
 
 def add_event():
-    if request.method == "POST":
         body = dict(request.get_json(force=True))
         event_title = body.get("title")
         event_description = body.get("description")
         event_date = body.get("date")
+        event_hour = body.get("hour")
         user_id = body.get("user_id")
-        print(user_id)
-        if(event_title and event_date):
+
+        if not event_title:
+            event_title = "Meu evento"
+
+        
+        date_string = event_date+" "+event_hour
+        
+        event_date = datetime.strptime(date_string, '%Y-%m-%d %H:%M').strftime('%d/%m/%y %H:%M')
+
+
+        if(len(event_title) != 0 and len(event_date) != 0):
             _db = db.db_connect()
-            user = insert_event(_db["cursor"], event_title, event_description, event_date, user_id)
+            insert_event(_db["cursor"], event_title, event_description, event_date, user_id)
             _db["connection"].commit()
             _db["connection"].close()
-            return jsonify({}), 201
+            return jsonify({'message': 'event created'}), 201
         else:
             return jsonify({}), 400
-    else:
-        return jsonify({}), 400
 
 
 def get_event(id):
