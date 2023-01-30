@@ -2,10 +2,6 @@ from database.querys import *
 from database.inserts import *
 from database.deletes import *
 from database.updates import *
-from database import db  
-from models.User import User
-from models.Event import Event
-from flask import request, jsonify, Response
 from controllers.login_controller import *
 from controllers.event_controller import *
 from controllers.user_controller import *
