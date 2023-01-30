@@ -1,9 +1,8 @@
-from flask import render_template, request, redirect, url_for, session
+from flask import render_template, request, redirect, url_for
 import requests
 from api import api_request
 from datetime import datetime
 import requests
-import json
 
 API = api_request()
 
@@ -31,13 +30,11 @@ def register_user():
 def login():
         if request.method == "POST":
 
-            data = dict(request.form)            
-            response = requests.post(API+'login', json.dumps(data))
+            data = dict(request.form)   
+            is_logged = API.login(data)
 
-            body = dict(response.json())
-            if(response.status_code == 200): 
-                session["user_id"]=body["id"]
-                session["name"]= body["name"]
+            
+            if(is_logged): 
 
                 return redirect(url_for("calendar"))
             else:
@@ -47,61 +44,37 @@ def login():
             return render_template('login.html')
 
 def logout():
-        requests.put(API+"list_event/"+str(session["user_id"]))
-        session.clear()
+        API.logout()
         return redirect(url_for('login'))
 
 def calendar():
-        if session["name"] == None:
+        if not API.is_logged:
             return redirect(url_for("login"))
-        events = requests.get(API+"list_event/"+str(session["user_id"]))
-        events = list(events.json())
+        events = API.get_events()
         return render_template("calendar.html", events=events)
 
 def list_event():
-        if session["name"] == None:
+        if not API.is_logged:
             return redirect(url_for("login"))
-        print("AQUI É O USER ID: ",session["user_id"])
-        events = requests.get(API+"list_event/"+str(session["user_id"]))
-        events = list(events.json())
+        print("AQUI É O USER ID: ", API.user_id)
+        events = API.get_events()
         return render_template("listEvents.html", events = events)
 
 
-def add_event():
-    if request.method == "POST":
-        event_title = request.form["title"]
-        event_description = request.form["description"]
-        event_date = request.form["date"]
-        event_hour =  request.form["hour"]
-
-        if not event_title:
-            event_title = "Meu evento"
-
-        
-        date_string = event_date+" "+event_hour
-        
-        event_complete_date = datetime.strptime(date_string, '%Y-%m-%d %H:%M').strftime('%d/%m/%y %H:%M')
-        
-        data = {
-            "title":event_title,
-            "description":event_description,
-            "date":event_complete_date,
-            "user_id":session["user_id"]
-        }
-
-        event = requests.post(API+"add_event", json.dumps(data))
-
-        return redirect(url_for("list_event"))
-    else: 
-        return render_template("addEvent.html")
+def add_event(): 
+    context = {
+        "add_event": API.add_event(),
+        "user_id": API.user_id
+    }
+    return render_template("addEvent.html", context=context)
 
 def view_event(id):
-        event = requests.get(API+"event/"+str(id))
-        event = dict(event.json())
+        event = API.get_event(str(id))
         return render_template("event.html", event=event)
 
 def del_event():
-        id_event = request.form["id"]   
+        id_event = request.form["id"]
+        response = API.delete_event(id_event)   
         event = requests.delete(API+"delete_event/"+id_event)
         return redirect(url_for("list_event"))
 
@@ -123,8 +96,7 @@ def edit_event(id):
                 "date":date_complete 
             }
             
-            response = requests.put(API+"edit_event/"+str(id), json.dumps(data))
-
+            response = API.edit_event(str(id), data)
           
             if(response.status_code == 200):
                 return redirect(url_for("list_event"))
@@ -132,22 +104,19 @@ def edit_event(id):
                 print("error ao editar")
                 return redirect(url_for("list_event"))
         
-        event = requests.get(API+"event/"+str(id))
-        event = dict(event.json())
+        event = API.get_event(str(id))
         return render_template("editEvent.html", event=event)
 
 def view_user():
-        print("user id: ", session["user_id"])
-        user = requests.get(API+"user/"+str(session["user_id"]))
-        user = dict(user.json())
-        print(user)
+        user = API.get_user()
         return render_template("user.html", user = user)
 
 
 def edit_user():
         if request.method == "POST":
             data = dict(request.form)
-            response =  requests.put(API+"edit_user/"+str(session["user_id"]), json.dumps(data))
+            response = API.edit_user(data)
+            
             
             if(response.status_code == 200):
                 return redirect(url_for("view_user"))
@@ -161,6 +130,6 @@ def del_user():
         if request.method == "POST":
             data = dict(request.form)
 
-            delete = requests.put(API+"delete_user/"+str(session["user_id"]), json.dumps(data))
+            API.delete_user()
             
             return redirect(url_for("login"))
