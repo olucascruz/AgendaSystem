@@ -13,13 +13,15 @@
         <h1>Adicionar Evento</h1>
         <hr>
         <br>
-        <form action="/add_event" method="post">
+        <p id="url_api" style="display: none;">{{context['add_event']}}</p>
+        <form method="post" id="form-add-event">
             <input name="title" type="text" placeholder="Titulo">
             <br>
             <input placeholder="Data" name="date" type="date" id="date" required>
             <input type="time" id="time" name="hour" required>
             <br>
             <textarea placeholder="Descrição" name="description" id="" cols="30" rows="10"></textarea>
+            <input style="display: none;" type="number" id="number" name="user_id" value="{{ context['user_id'] }}" required>
             <br>
             <input type="submit">
         </form>
