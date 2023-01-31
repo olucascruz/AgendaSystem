@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/add_event.css">
-    <script src="/static/scripts/addEvent.js" defer></script>
+    <script src="../static/scripts/editEvent.js" defer></script>
     <title>Agenda</title>
 </head>
 <body>
@@ -13,7 +13,8 @@
         <h1>Editar Evento</h1>
         <hr>
         <br>
-        <form action="/edit_event/{{event['id']}}" method="post">
+        <p id="event-id" style="display: none;">{{event['id']}}</p>
+        <form id="form-edit-event" method="post">
             <input name="title" type="text" placeholder="Titulo" value="{{event['title']}}">
             <br>
             <input placeholder="Data" name="date" type="date" id="date" required value="{{event['date']}}">
