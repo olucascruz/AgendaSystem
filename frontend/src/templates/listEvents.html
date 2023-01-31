@@ -9,7 +9,7 @@
         <div id="modal-{{event['id']}}" class="modal_delete hidden" >
             <form action="/del_event" method="post">
                 <p>Voce deseja mesmo deletar '{{event.title}}'?</p>
-                <input type="text" value="{{event['id']}}" style="display: none;">
+                <input type="text" name="id" value="{{event['id']}}" style="display: none;">
                 <div class="btn-modal">
                 <button type="submit" class="btn-sim">Sim</button>
                 <button type="button" class="btn-nao">Não</button>
