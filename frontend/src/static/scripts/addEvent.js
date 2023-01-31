@@ -9,7 +9,18 @@ const currentTime = date.toISOString().substring(11,16);
 document.getElementById('date').value = currentDate;
 document.getElementById('time').value = currentTime;
 
-console.log(url_api)
+
+const addEvent = async (data) => {
+    const endpoint = 'add_event' 
+    await fetch('http://localhost:8000/'+endpoint, {
+        method: "POST",
+        body: JSON.stringify(data),
+        mode:"cors",
+        headers:{
+            "Content-type": "application/json",
+        }, 
+     })
+}
 
 form.addEventListener('submit', async (event)=>{
         event.preventDefault();
@@ -31,15 +42,7 @@ form.addEventListener('submit', async (event)=>{
         }
 
         
-
-        await fetch(url_api, {
-            method: "POST",
-            body: JSON.stringify(data),
-            mode:"cors",
-            headers:{
-                "Content-type": "application/json",
-            }, 
-         }).then(window.history.back())
+        addEvent(data).then(window.history.back())
     
         
 })
