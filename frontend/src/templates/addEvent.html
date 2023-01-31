@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/add_event.css">
-    <script src="/static/scripts/addEvent.js" defer></script>
+    <script type="module" src="/static/scripts/addEvent.js" defer></script>
     <title>Agenda</title>
 </head>
 <body>
@@ -13,7 +13,6 @@
         <h1>Adicionar Evento</h1>
         <hr>
         <br>
-        <p id="url_api" style="display: none;">{{context['add_event']}}</p>
         <form method="post" id="form-add-event">
             <input name="title" type="text" placeholder="Titulo">
             <br>
