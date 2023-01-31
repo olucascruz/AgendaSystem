@@ -1,9 +1,6 @@
-from flask import jsonify, request
+from flask import request
 from database.querys import *
-from database.inserts import *
-from database.deletes import *
-from database.updates import *
-from database.db import db_connect  
+ 
 from usecases.event.add_event_usecase import *
 from usecases.event.get_one_event_usecase import *
 from usecases.event.get_all_event_user_usecase import *
