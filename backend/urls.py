@@ -1,7 +1,3 @@
-from database.querys import *
-from database.inserts import *
-from database.deletes import *
-from database.updates import *
 from controllers.login_controller import *
 from controllers.event_controller import *
 from controllers.user_controller import *
@@ -11,6 +7,8 @@ def urls(app):
 
     app.add_url_rule("/login",
     "login", login, methods=["POST"])
+
+
     app.add_url_rule("/logout/<int:id>",
     "logout", logout)
 
