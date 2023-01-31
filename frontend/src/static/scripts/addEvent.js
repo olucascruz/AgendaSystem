@@ -1,7 +1,6 @@
 const date = new Date();
 const now = date.toLocaleString();
 const form = document.getElementById("form-add-event")
-const url_api = document.getElementById("url_api").textContent
 
 const currentDate = date.toISOString().substring(0,10);
 const currentTime = date.toISOString().substring(11,16);
@@ -42,7 +41,8 @@ form.addEventListener('submit', async (event)=>{
         }
 
         
-        addEvent(data).then(window.history.back())
+        addEvent(data)
+        .then(window.history.back())
     
         
 })
