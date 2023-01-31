@@ -4,7 +4,7 @@ import json
 class api_request():
     
     def __init__(self) -> None:
-        self.BASE_URL = 'http://localhost:5000'
+        self.BASE_URL = 'http://localhost:8000/'
         self.user_id = ''
         self.is_logged = False
     
@@ -101,7 +101,7 @@ class api_request():
         return response.status_code
 
     def delete_event(self, id):
-        endpoint = "del_event/"
+        endpoint = "delete_event/"
 
         response = requests.delete(self.BASE_URL+endpoint+id)
         return response.status_code

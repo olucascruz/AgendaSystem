@@ -1,7 +1,6 @@
 from flask import render_template, request, redirect, url_for
 import requests
 from api import api_request
-from datetime import datetime
 import requests
 
 API = api_request()
@@ -14,7 +13,6 @@ def index():
 
         except Exception:
             users = "falha de conexão"
-        print(users)
         return render_template("login.html", users = users)
 
 def register_user():
@@ -56,7 +54,6 @@ def calendar():
 def list_event():
         if not API.is_logged:
             return redirect(url_for("login"))
-        print("AQUI É O USER ID: ", API.user_id)
         events = API.get_events()
         return render_template("listEvents.html", events = events)
 
@@ -74,8 +71,7 @@ def view_event(id):
 
 def del_event():
         id_event = request.form["id"]
-        response = API.delete_event(id_event)   
-        event = requests.delete(API+"delete_event/"+id_event)
+        response = API.delete_event(id_event)
         return redirect(url_for("list_event"))
 
 def edit_event(id):
@@ -101,7 +97,6 @@ def edit_event(id):
             if(response.status_code == 200):
                 return redirect(url_for("list_event"))
             else:
-                print("error ao editar")
                 return redirect(url_for("list_event"))
         
         event = API.get_event(str(id))
