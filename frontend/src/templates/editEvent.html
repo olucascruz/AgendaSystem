@@ -14,12 +14,12 @@
         <hr>
         <br>
         <p id="event-id" style="display: none;">{{event['id']}}</p>
-        <form id="form-edit-event" method="post">
+        <form id= "form-edit-event" method="post">
             <input name="title" type="text" placeholder="Titulo" value="{{event['title']}}">
             <br>
-            <input placeholder="Data" name="date" type="date" id="date" required value="{{event['date']}}">
-            <input value="" type="time" id="time" name="hour" required
-            value="{{event['date']}}">
+            <input placeholder="dd-mm-yyyy" name="date" type="date" id="date"  value="{{event['date']}}" required>
+            <input type="time" id="time" name="hour" required
+            value="{{event['hour']}}">
             <br>
             <textarea placeholder="Descrição" name="description" id="description" cols="30" rows="10">{{event['description']}}</textarea>
             <br>     

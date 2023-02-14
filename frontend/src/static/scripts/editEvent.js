@@ -1,5 +1,5 @@
 const form = document.getElementById('form-edit-event')
-const id = document.getElementById('event-id').textContent
+const id  = document.getElementById('event-id').textContent
 
 
 const editEvent = async (data) => {
@@ -23,7 +23,6 @@ form.addEventListener('submit', async (event)=>{
     const description = form['description'].value
     const date = form['date'].value
     const hour = form['hour'].value
-    const user_id = form['user_id'].value
     
 
     const data = {
@@ -31,11 +30,11 @@ form.addEventListener('submit', async (event)=>{
         "description":description, 
         "date": date, 
         "hour": hour, 
-        "user_id": parseInt(user_id)
     }
 
-    
-    editEvent(data).then(window.history.back())
+    console.log(data)
+    editEvent(data)
+    .then(window.history.back())
 
     
 })
