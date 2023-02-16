@@ -8,3 +8,4 @@ def event_factory():
     event_controller = EventController(event_usecase)
 
     return event_controller
+    
