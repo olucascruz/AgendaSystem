@@ -1,41 +1,53 @@
-from database.db import db_connect  
+from database.db import get_db  
 
 
-class User_repository:
+class UserRepository:
     def __init__(self) -> None:
-        self.db = db_connect()
+        self.db = get_db()
+        self.cursor = self.db.cursor()
+
+    def get_users(self):
+        self.cursor.execute("SELECT * from user")
+        all_users = self.cursor.fetchall()
+        all_users = [tuple(row) for row in all_users]
+        return all_users
 
     def register(self, user_name, user_email, user_password):
-        self.db['cursor'].execute("insert into user (name, email, password, status) values (?,?,?,?)", [user_name, user_email, user_password, 0])
-        self.db['connection'].commit()
+        self.cursor.execute("insert into user (name, email, password, status) values (?,?,?,?)", [user_name, user_email, user_password, 0])
+        self.db.commit()
 
-    def auth_db(self, user_email, user_password):    
-        self.db['cursor'].execute(f'SELECT * FROM user WHERE email = ? AND password = ?', [user_email, user_password])
-        user = self.db['cursor'].fetchone()
-        return user
+    def auth_db(self, user_email, user_password):
+        try:    
+            self.cursor.execute(f'SELECT * FROM user WHERE email = ? AND password = ?', [user_email, user_password])
+            user = self.cursor.fetchone()
+            return user
+        except Exception as e:
+            print(e)
 
     def update_status_user_active(self, id):   
-        self.db['cursor'].execute('UPDATE user SET status = ? WHERE userid = ?', [1, id])
-        self.db['connection'].commit()
+        self.cursor.execute('UPDATE user SET status = ? WHERE userid = ?', [1, id])
+        self.db.commit()
     
         return True
 
     def update_status_user_desactive(self, id):   
-        self.db['cursor'].execute('UPDATE user SET status = ? WHERE userid = ?', [0, id])
-        self.db['connection'].commit()
+        self.cursor.execute('UPDATE user SET status = ? WHERE userid = ?', [0, id])
+        self.db.commit()
     
         return True
 
     def get_user_by_id(self, id):
-        self.db['cursor'].execute(f'SELECT * FROM user WHERE userid = ?', [id])
-        user = self.db['cursor'].fetchone()
-    
+        self.cursor.execute(f'SELECT * FROM user WHERE userid = ?', [id])
+        user = self.cursor.fetchone()
+
         return user
 
-    def update_user(cursor, id, name, email, password):
-        cursor.execute(f'UPDATE user SET name = ?, email = ?, password = ? WHERE userid = ?', [name, email, password, id])
+    def update_user(self, id, name, email, password):
+        self.cursor.execute(f'UPDATE user SET name = ?, email = ?, password = ? WHERE userid = ?', [name, email, password, id])
+        self.db.commit()
 
-    def update_status_user_del(cursor, id):
-        cursor.execute(f'UPDATE user SET status = ? WHERE userid = ?', [-1, id])
+    def update_status_user_del(self, id):
+        self.cursor.execute(f'UPDATE user SET status = ? WHERE userid = ?', [-1, id])
+        self.db.commit()
         
     
