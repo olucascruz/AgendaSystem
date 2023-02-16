@@ -30,9 +30,8 @@ class api_request():
 
     def logout(self):
         endpoint = 'logout/'
-        response = requests.post(self.BASE_URL+endpoint+self.user_id)
+        response = requests.put(self.BASE_URL+endpoint+self.user_id)
         if response.status_code == 200: 
-            body = dict(response.json())
             self.__set_user_id(None)
             self.__set_is_logged(False)
             return True
@@ -58,7 +57,7 @@ class api_request():
         endpoint = "event/"
 
         response = requests.get(self.BASE_URL+endpoint+ str(id))
-        event = dict(event.json())
+        event = dict(response.json())
         return event
 
     def get_events(self) -> list:
@@ -67,6 +66,7 @@ class api_request():
         response = requests.get(self.BASE_URL+endpoint+self.user_id)
         if response.status_code == 200:
             events = list(response.json())
+
             return events
         return []
 
@@ -96,7 +96,7 @@ class api_request():
 
 
     def delete_user(self):
-        endpoint = "del_user/"
+        endpoint = "delete_user/"
         response = requests.put(self.BASE_URL+endpoint+self.user_id)
         return response.status_code
 
