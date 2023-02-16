@@ -94,13 +94,12 @@ def edit_event(id):
             
             response = API.edit_event(str(id), data)
           
-            if(response.status_code == 200):
+            if(response == 200):
                 return redirect(url_for("list_event"))
-            else:
-                return redirect(url_for("list_event"))
+            
         
         event = API.get_event(str(id))
-        return render_template("editEvent.html", event=event)
+        return render_template("editEvent.html", event=event, user_id=API.user_id)
 
 def view_user():
         user = API.get_user()
@@ -113,7 +112,7 @@ def edit_user():
             response = API.edit_user(data)
             
             
-            if(response.status_code == 200):
+            if(response == 200):
                 return redirect(url_for("view_user"))
             
             error = "Senha incorreta"
